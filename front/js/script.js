@@ -15,6 +15,7 @@ function showProducts(products) {
 //affichage d'un produit
 function showProduct(product) {
   let productLink = document.createElement("a");
+  productLink.href = `./product.html?id=${product._id}`
   productLink.innerHTML = `
     <article>
         <img src="${product.imageUrl}" alt="${product.altTxt}">
