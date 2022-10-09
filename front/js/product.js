@@ -22,7 +22,6 @@ function getProductFromApi(id){
 //montre les détails d'un produit
 
 function showProductDetails(details){
-    console.log(details)
    let img = document.querySelector('.item__img');
    let title = document.querySelector('#title');
    let price = document.querySelector('#price');
