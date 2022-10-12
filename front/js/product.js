@@ -63,8 +63,12 @@ function handleAddToCartEvent(){
     let color = document.querySelector('#colors').value;
     let quantity = parseInt(document.querySelector('#quantity').value);
     if (color != '' && quantity != 0){
-        addProductToCart(id, color, quantity);
-        addToCartValidationMessage();
+        try {
+            addProductToCart(id, color, quantity);
+            showPopUpSuccess('Votre article à bien été ajouté au panier !');
+        } catch (err){
+            showPopUpError(err.message);
+        }
     }
 }
 
@@ -93,24 +97,36 @@ function addProductToCart(id, color, quantity){
     if (index == -1){
         cart.push(newProduct);
     } else {
+        if (cart[index].quantity + quantity > 100){
+            throw new Error(`Impossible d'ajouter plus de produit dans le panier`)
+        }
         cart[index].quantity += quantity;
     }
     storeCart(cart);
 }
 
-//affiche un message quand un article à été ajouté au panier
-function addToCartValidationMessage(message){
+function showPopUp(message, type){
     let popUp = document.createElement('div');
-    popUp.textContent = "Votre article à bien été ajouté au panier !";
+    popUp.textContent = message;
     popUp.style.position = 'fixed';
     popUp.style.padding = '20px';
     popUp.style.bottom = '20px';
     popUp.style.right = '20px';
     popUp.style.zIndex = '9999';
-    popUp.style.backgroundColor = '#51DB6B';
+    popUp.style.backgroundColor =  type === 'success' ? '#51DB6B' : '#D4575A';
     popUp.style.borderRadius = '20px';
     setTimeout(function (){
         popUp.remove();
     }, 2000)
     document.body.appendChild(popUp);
+}
+
+//affiche un message de succès
+function showPopUpSuccess(message){
+    showPopUp(message, "success");
+}
+
+//affiche un message d'erreur
+function showPopUpError(message){
+    showPopUp(message, "error")
 }
