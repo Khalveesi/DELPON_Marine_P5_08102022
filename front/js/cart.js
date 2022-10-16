@@ -109,4 +109,33 @@ function showProductInCart(product, color, quantity){
     deleteParagraph.classList.add('deleteItem');
     deleteParagraph.textContent = 'Supprimer';
     cartItemContentSettingsDelete.appendChild(deleteParagraph);
+
+    deleteParagraph.addEventListener('click', removeProduct.bind(null, product, color, quantity))
+}
+
+//supprimer un produit
+function removeProduct(product, color, quantity){
+    let cartArticle = document.querySelector(`.cart__item[data-id="${product._id}"][data-color="${color}"]`)
+    cartArticle.remove();
+    addToTotalPrice(-(product.price*quantity));
+    addTotalQuantity(-(quantity));
+    removeProductToCart(product._id, color);
+}
+
+//stock le panier dans le storage
+function storeCart(cart){
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+//enlève les données du produit choisit dans le local storage
+function removeProductToCart(id, color){
+    const cart = getProductsFromLocalStorage();
+    //recherche si le produit existe déjà dans le panier
+    const index = cart.findIndex(function(product){
+        return product.id == id && product.color == color; //comparaison
+    })
+    if (index >= 0){
+        cart.splice(index, 1);
+        storeCart(cart);
+    }
 }
