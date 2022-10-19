@@ -5,18 +5,28 @@ async function main() {
     for (let cartProduct of products) {
         const product = await getProductFromApi(cartProduct.id);
         cartProducts.push({
-            id:cartProduct.id,
-            quantity:cartProduct.quantity,
-            color:cartProduct.color,
-            details:product
+            id: cartProduct.id,
+            quantity: cartProduct.quantity,
+            color: cartProduct.color,
+            details: product,
         });
         showProductInCart(product, cartProduct.color, cartProduct.quantity);
     }
     showTotalPrice(calculateTotalPrice(cartProducts));
     showTotalProduct(calculateTotalQuantity(cartProducts));
+
+    if (cartProducts.length === 0) {
+        hideCommandForm();
+    }
 }
 
 main();
+
+//masque le formulaire de commande quand le panier est vide
+function hideCommandForm(){
+    let cartOrder = document.querySelector('.cart__order');
+    cartOrder.style.display = 'none'
+}
 
 //recupère les données des articles dans le local Storage
 function getProductsFromLocalStorage() {
@@ -28,37 +38,32 @@ function getProductsFromLocalStorage() {
 }
 
 //affiche le prix total
-function showTotalPrice(price){
+function showTotalPrice(price) {
     let totalPrice = document.querySelector("#totalPrice");
     totalPrice.textContent = price;
 }
 
 //calcule ou recalcule le prix total
-function calculateTotalPrice(products){
-    const result = products.reduce(
-        function(total, product){
-            return total + product.details.price;
-        }, 0
-    )
-    return result
+function calculateTotalPrice(products) {
+    const result = products.reduce(function (total, product) {
+        return total + product.details.price * product.quantity;
+    }, 0);
+    return result;
 }
 
-//affiche le total des produits 
+//affiche le total des produits
 function showTotalProduct(quantity) {
     let totalQuantity = document.querySelector("#totalQuantity");
-    totalQuantity.textContent =  quantity;
+    totalQuantity.textContent = quantity;
 }
 
 //calcule la quantité total
-function calculateTotalQuantity(products){
-    const result = products.reduce(
-        function(total, product){
-            return total + product.quantity;
-        }, 0
-    )
-    return result
+function calculateTotalQuantity(products) {
+    const result = products.reduce(function (total, product) {
+        return total + product.quantity;
+    }, 0);
+    return result;
 }
-
 
 //affiche les articles dans le panier
 function showProductInCart(product, color, quantity) {
@@ -92,11 +97,11 @@ function showProductInCart(product, color, quantity) {
     cartItemContentDesc.appendChild(h2CartItemContentDesc);
 
     let colorItemDesc = document.createElement("p");
-    colorItemDesc.textContent = color;
+    colorItemDesc.textContent = `color: ${color}`;
     cartItemContentDesc.appendChild(colorItemDesc);
 
     let priceItemDesc = document.createElement("p");
-    priceItemDesc.textContent = product.price;
+    priceItemDesc.textContent = `prix: ${product.price} €`;
     cartItemContentDesc.appendChild(priceItemDesc);
 
     let cartItemContentSettings = document.createElement("div");
@@ -135,35 +140,71 @@ function showProductInCart(product, color, quantity) {
 
     deleteParagraph.addEventListener(
         "click",
-        removeProduct.bind(null, product, color, quantity)
+        function(){
+            onProductRemove(product, color)
+        }
+    );
+
+    inputQuantity.addEventListener(
+        "change",
+        function(evt){
+            onProductQuantityChange(product, color, parseInt(evt.target.value))
+        }
     );
 }
 
-//supprimer un produit
-function removeProduct(product, color, quantity) {
+//gère l'évènement de la supression d'un produit
+function onProductRemove(product, color) {
     let cartArticle = document.querySelector(
         `.cart__item[data-id="${product._id}"][data-color="${color}"]`
     );
     cartArticle.remove();
-    addToTotalPrice(-(product.price * quantity));
-    addTotalQuantity(-quantity);
-    removeProductToCart(product._id, color);
+    removeProduct(cartProducts, product._id, color);
+    storeCartProducts(cartProducts);
+    showTotalPrice(calculateTotalPrice(cartProducts));
+    showTotalProduct(calculateTotalQuantity(cartProducts));
+}
+
+//gère l'évènement du changement de la quantité dde produit
+function onProductQuantityChange(product, color, quantity){
+    updateProductQuantity(cartProducts, product._id, color, quantity);
+    storeCartProducts(cartProducts);
+    showTotalPrice(calculateTotalPrice(cartProducts));
+    showTotalProduct(calculateTotalQuantity(cartProducts));
 }
 
 //stock le panier dans le storage
-function storeCart(cart) {
-    localStorage.setItem("cart", JSON.stringify(cart));
+function storeCartProducts(products) {
+    localStorage.setItem(
+        "cart",
+        JSON.stringify(
+            products.map(function (product) {
+                return {
+                    id: product.id,
+                    quantity: product.quantity,
+                    color: product.color,
+                };
+            })
+        )
+    );
 }
 
 //enlève les données du produit choisit dans le local storage
-function removeProductToCart(id, color) {
-    const cart = getProductsFromLocalStorage();
+function removeProduct(products, id, color) {
     //recherche si le produit existe déjà dans le panier
-    const index = cart.findIndex(function (product) {
+    const index = products.findIndex(function (product) {
         return product.id == id && product.color == color; //comparaison
     });
     if (index >= 0) {
-        cart.splice(index, 1);
-        storeCart(cart);
+        products.splice(index, 1);
+    }
+}
+
+function updateProductQuantity(products, id, color, quantity){
+    const index = products.findIndex(function (product) {
+        return product.id == id && product.color == color; //comparaison
+    });
+    if (index >= 0) {
+        products[index].quantity = quantity
     }
 }
