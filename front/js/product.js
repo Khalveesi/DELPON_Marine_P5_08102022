@@ -1,22 +1,11 @@
 function main() {
-    const apiUrl = 'http://localhost:3000/api';
     const id = getIdFromUrl();
-    getProductFromApi(apiUrl, id).then(showProductDetails).catch(showError);
+    getProductFromApi(id).then(showProductDetails).catch(showError);
     let btnAddToCart = document.querySelector('#addToCart');
     btnAddToCart.addEventListener('click', handleAddToCartEvent);
 }
 
 main();
-
-//récupère un produit depuis l'API avec l'ID
-function getProductFromApi(url, id) {
-    return fetch(`${url}/products/${id}`).then(function(response){
-      if (response.ok){
-        return response.json();
-      }
-      throw new Error('somethings wrent wrong');
-    });
-  }
 
 //montre un message d'erreur si l'API n'est pas dispo
 function showError(error){

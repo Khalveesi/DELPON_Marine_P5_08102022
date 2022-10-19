@@ -1,5 +1,6 @@
 //récupère les données depuis l'API
 function getProductsFromApi(urlApi) {
+
   return fetch(`${urlApi}/products`).then(function(response){
     if (response.ok){
       return response.json();
@@ -45,8 +46,8 @@ function showError(error){
 
 //point d'entrée du script
 function main() {
-  let url = "http://localhost:3000/api";
-  getProductsFromApi(url)
+  
+  getProductsFromApi(URL)
     .then(showProducts)
     .catch(showError);
 }
