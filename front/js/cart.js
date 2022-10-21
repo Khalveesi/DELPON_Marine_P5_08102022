@@ -14,18 +14,16 @@ async function main() {
     }
     showTotalPrice(calculateTotalPrice(cartProducts));
     showTotalProduct(calculateTotalQuantity(cartProducts));
-
-    if (cartProducts.length === 0) {
-        hideCommandForm();
-    }
+    UpdateFormVisibility();
 }
 
 main();
 
-//masque le formulaire de commande quand le panier est vide
-function hideCommandForm(){
-    let cartOrder = document.querySelector('.cart__order');
-    cartOrder.style.display = 'none'
+function UpdateFormVisibility(){
+    if (cartProducts.length === 0) {
+        let cartOrder = document.querySelector('.cart__order');
+        cartOrder.style.display = 'none'
+    }
 }
 
 //recupère les données des articles dans le local Storage
@@ -198,6 +196,7 @@ function removeProduct(products, id, color) {
     if (index >= 0) {
         products.splice(index, 1);
     }
+    UpdateFormVisibility();
 }
 
 function updateProductQuantity(products, id, color, quantity){
