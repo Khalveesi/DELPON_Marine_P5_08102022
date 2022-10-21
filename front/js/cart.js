@@ -14,13 +14,14 @@ async function main() {
     }
     showTotalPrice(calculateTotalPrice(cartProducts));
     showTotalProduct(calculateTotalQuantity(cartProducts));
-    UpdateFormVisibility();
+    refreshFormVisibility();
+    attachEventListenerToFormField();
 }
 
 main();
 
 //enlève le formulaire de commande quand le panier est vide
-function UpdateFormVisibility(){
+function refreshFormVisibility(){
     if (cartProducts.length === 0) {
         let cartOrder = document.querySelector('.cart__order');
         cartOrder.style.display = 'none'
@@ -197,7 +198,7 @@ function removeProduct(products, id, color) {
     if (index >= 0) {
         products.splice(index, 1);
     }
-    UpdateFormVisibility();
+    refreshFormVisibility();
 }
 
 function updateProductQuantity(products, id, color, quantity){
@@ -207,4 +208,77 @@ function updateProductQuantity(products, id, color, quantity){
     if (index >= 0) {
         products[index].quantity = quantity
     }
+}
+
+//vérifie si le champ prénom est valide
+function checkFirstNameField() {
+    const firstNameValidation = /^[a-zA-Z]+[- ']{0,1}[a-zA-Z]+$/;
+    const userName = document.querySelector("#firstName").value;
+    let firstNameErrorMessage = document.querySelector("#firstNameErrorMsg");
+    firstNameErrorMessage.textContent = firstNameValidation.test(userName) && userName !== '' ? null : "Champ invalide";
+    firstNameErrorMessage.style.color = "red";
+}
+
+function attachEventListenerToFormField(){
+    const userFirstName = document.querySelector('#firstName');
+    const userLastName = document.querySelector('#lastName');
+    const emailContent = document.querySelector('#email');
+    const adressContent = document.querySelector('#address');
+    const cityContent = document.querySelector('#city');
+
+    userFirstName.addEventListener(
+        'blur',
+        function(){
+            checkFirstNameField();
+        }
+    )
+    userLastName.addEventListener(
+        'blur',
+        function(){
+            checkLastNameField();
+        }
+    )
+    emailContent.addEventListener(
+        'blur',
+        function(){
+            checkMail();
+        }
+    )
+    adressContent.addEventListener(
+        'blur',
+        function(){
+            checkIfFieldsEmpty('#address', '#addressErrorMsg');
+        }
+    )
+    cityContent.addEventListener(
+        'blur',
+        function(){
+            checkIfFieldsEmpty('#city', '#cityErrorMsg');
+        }
+    )
+}
+
+function checkLastNameField() {
+    const lastNameValidation = /^(([A-Za-z]+[\-\']?)*([A-Za-z]+)?\s)+([A-Za-z]+[\-\']?)*([A-Za-z]+)?$/
+    const userLastName = document.querySelector("#lastName").value;
+    let lastNameErrorMessage = document.querySelector("#lastNameErrorMsg");
+    lastNameErrorMessage.textContent = lastNameValidation.test(userLastName) && userLastName !== '' ? null : "Champ invalide";
+    lastNameErrorMessage.style.color = "red";
+}
+
+//vérifie si l'email est valide
+function checkMail() {
+    const emailValidation = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailContent = document.querySelector('#email').value;
+    let emailErrorMessage = document.querySelector('#emailErrorMsg');
+    emailErrorMessage.textContent = emailValidation.test(emailContent) && emailContent !== '' ? null : "Champ invalide";
+    emailErrorMessage.style.color = 'red';
+}
+
+//vérifie que le champ n'est pas vide 
+function checkIfFieldsEmpty(idContent, idErrMsg){
+    const errMsg = document.querySelector(idErrMsg);
+    const content = document.querySelector(idContent).value;
+    errMsg.textContent = content !== '' ? null : "Champ invalide";
+    errMsg.style.color = 'red';
 }
