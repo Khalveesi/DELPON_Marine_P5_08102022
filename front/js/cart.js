@@ -1,3 +1,4 @@
+
 const cartProducts = [];
 
 async function main() {
@@ -210,20 +211,12 @@ function updateProductQuantity(products, id, color, quantity){
     }
 }
 
-//vérifie si le champ prénom est valide
-function checkFirstNameField() {
-    const firstNameValidation = /^[a-zA-Z]+[- ']{0,1}[a-zA-Z]+$/;
-    const userName = document.querySelector("#firstName").value;
-    let firstNameErrorMessage = document.querySelector("#firstNameErrorMsg");
-    firstNameErrorMessage.textContent = firstNameValidation.test(userName) && userName !== '' ? null : "Champ invalide";
-    firstNameErrorMessage.style.color = "red";
-}
-
 function attachEventListenerToFormField(){
+    const formContent = document.querySelector('.cart__order__form');
     const userFirstName = document.querySelector('#firstName');
     const userLastName = document.querySelector('#lastName');
     const emailContent = document.querySelector('#email');
-    const adressContent = document.querySelector('#address');
+    const addressContent = document.querySelector('#address');
     const cityContent = document.querySelector('#city');
 
     userFirstName.addEventListener(
@@ -244,7 +237,7 @@ function attachEventListenerToFormField(){
             checkMail();
         }
     )
-    adressContent.addEventListener(
+    addressContent.addEventListener(
         'blur',
         function(){
             checkIfFieldsEmpty('#address', '#addressErrorMsg');
@@ -256,14 +249,33 @@ function attachEventListenerToFormField(){
             checkIfFieldsEmpty('#city', '#cityErrorMsg');
         }
     )
+        formContent.addEventListener(
+            'submit',
+            function(evt){
+                handleSubmitForm(evt);
+            }
+        )
+}
+
+//vérifie si le champ prénom est valide
+function checkFirstNameField() {
+    const firstNameValidation = /^[a-zA-Z]+[- ']{0,1}[a-zA-Z]+$/;
+    const userName = document.querySelector("#firstName").value;
+    const isValidFirstName = firstNameValidation.test(userName) && userName !== ''; 
+    let firstNameErrorMessage = document.querySelector("#firstNameErrorMsg");
+    firstNameErrorMessage.textContent = isValidFirstName ? null : "Champ invalide";
+    firstNameErrorMessage.style.color = "red";
+    return isValidFirstName;
 }
 
 function checkLastNameField() {
     const lastNameValidation = /^(([A-Za-z]+[\-\']?)*([A-Za-z]+)?\s)+([A-Za-z]+[\-\']?)*([A-Za-z]+)?$/
     const userLastName = document.querySelector("#lastName").value;
     let lastNameErrorMessage = document.querySelector("#lastNameErrorMsg");
-    lastNameErrorMessage.textContent = lastNameValidation.test(userLastName) && userLastName !== '' ? null : "Champ invalide";
+    const isValidLastName = lastNameValidation.test(userLastName) && userLastName !== '';
+    lastNameErrorMessage.textContent = isValidLastName ? null : "Champ invalide";
     lastNameErrorMessage.style.color = "red";
+    return isValidLastName;
 }
 
 //vérifie si l'email est valide
@@ -271,14 +283,61 @@ function checkMail() {
     const emailValidation = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const emailContent = document.querySelector('#email').value;
     let emailErrorMessage = document.querySelector('#emailErrorMsg');
-    emailErrorMessage.textContent = emailValidation.test(emailContent) && emailContent !== '' ? null : "Champ invalide";
+    const isValidMail = emailValidation.test(emailContent) && emailContent !== ''; 
+    emailErrorMessage.textContent = isValidMail ? null : "Champ invalide";
     emailErrorMessage.style.color = 'red';
+    return isValidMail;
 }
 
 //vérifie que le champ n'est pas vide 
 function checkIfFieldsEmpty(idContent, idErrMsg){
     const errMsg = document.querySelector(idErrMsg);
     const content = document.querySelector(idContent).value;
-    errMsg.textContent = content !== '' ? null : "Champ invalide";
+    const fieldIsNotEmpty = content !== ''; 
+    errMsg.textContent = fieldIsNotEmpty ? null : "Champ invalide";
     errMsg.style.color = 'red';
+    return fieldIsNotEmpty;
+}
+
+//récupère les données du formulaire remplis
+function handleSubmitForm(evt){
+    evt.preventDefault();
+
+    if (!checkFields()){
+        return;
+    }
+
+    const requestBody = {
+        contact: {
+            firstName: document.querySelector('#firstName').value,
+            lastName: document.querySelector('#lastName').value,
+            address: document.querySelector('#address').value,
+            city: document.querySelector('#city').value,
+            email: document.querySelector('#email').value,
+        },
+        products: cartProducts.map((product) => product.id)
+    }
+    postOrder(requestBody);
+}
+
+
+//vérifie que le formulaire est bien valide
+function checkFields() {
+    return checkFirstNameField()
+        && checkLastNameField()
+        && checkMail()
+        && checkIfFieldsEmpty('#address', '#addressErrorMsg')
+        && checkIfFieldsEmpty('#city', '#cityErrorMsg')
+}
+
+//envie la requête vers l'API
+async function postOrder(requestBody){
+    const response = await fetch(`${URL}/products/order`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify(requestBody)
+    });
+    const result = await response.json();
 }
