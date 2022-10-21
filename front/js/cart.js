@@ -19,6 +19,7 @@ async function main() {
 
 main();
 
+//enlève le formulaire de commande quand le panier est vide
 function UpdateFormVisibility(){
     if (cartProducts.length === 0) {
         let cartOrder = document.querySelector('.cart__order');
