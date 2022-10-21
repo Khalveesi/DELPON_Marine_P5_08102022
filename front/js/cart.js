@@ -1,3 +1,4 @@
+
 const cartProducts = [];
 
 async function main() {
@@ -308,20 +309,35 @@ function handleSubmitForm(evt){
 
     const requestBody = {
         contact: {
-            firstname: document.querySelector('#firstName').value,
-            lastname: document.querySelector('#lastName').value,
+            firstName: document.querySelector('#firstName').value,
+            lastName: document.querySelector('#lastName').value,
             address: document.querySelector('#address').value,
             city: document.querySelector('#city').value,
             email: document.querySelector('#email').value,
         },
         products: cartProducts.map((product) => product.id)
     }
+    postOrder(requestBody);
 }
 
+
+//vérifie que le formulaire est bien valide
 function checkFields() {
     return checkFirstNameField()
         && checkLastNameField()
         && checkMail()
         && checkIfFieldsEmpty('#address', '#addressErrorMsg')
         && checkIfFieldsEmpty('#city', '#cityErrorMsg')
+}
+
+//envie la requête vers l'API
+async function postOrder(requestBody){
+    const response = await fetch(`${URL}/products/order`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify(requestBody)
+    });
+    const result = await response.json();
 }
