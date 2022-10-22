@@ -259,7 +259,7 @@ function attachEventListenerToFormField(){
 
 //vérifie si le champ prénom est valide
 function checkFirstNameField() {
-    const firstNameValidation = /^[a-zA-Z]+[- ']{0,1}[a-zA-Z]+$/;
+    const firstNameValidation = /^[A-Za-zÀ-ÿ]+[-\s]{0,1}[A-Za-zÀ-ÿ]+$/;
     const userName = document.querySelector("#firstName").value;
     const isValidFirstName = firstNameValidation.test(userName) && userName !== ''; 
     let firstNameErrorMessage = document.querySelector("#firstNameErrorMsg");
@@ -269,7 +269,7 @@ function checkFirstNameField() {
 }
 
 function checkLastNameField() {
-    const lastNameValidation = /^(([A-Za-z]+[\-\']?)*([A-Za-z]+)?\s)+([A-Za-z]+[\-\']?)*([A-Za-z]+)?$/
+    const lastNameValidation = /^(?:[A-Za-z]+[\s]{0,1})+$/;
     const userLastName = document.querySelector("#lastName").value;
     let lastNameErrorMessage = document.querySelector("#lastNameErrorMsg");
     const isValidLastName = lastNameValidation.test(userLastName) && userLastName !== '';
