@@ -321,13 +321,12 @@ async function handleSubmitForm(evt){
     try {
         const res = await postOrder(requestBody);
         clearLocalStorage();
-        window.location = '/front/html/confirmation.html?order='+res;
+        window.location = '/front/html/confirmation.html?order='+res.orderId;
     } catch(err){
         showPopUpError('Une erreur est survenus')
     }
     
 }
-
 
 //vérifie que le formulaire est bien valide
 function checkFields() {
