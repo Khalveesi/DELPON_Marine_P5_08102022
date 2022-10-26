@@ -20,6 +20,7 @@ function getIdFromUrl(){
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('id');
 }
+
 //montre les détails d'un produit
 function showProductDetails(details){
    let imgContainer= document.querySelector('.item__img');
