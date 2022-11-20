@@ -321,7 +321,7 @@ async function handleSubmitForm(evt){
     try {
         const res = await postOrder(requestBody);
         clearLocalStorage();
-        window.location = '/front/html/confirmation.html?order='+res.orderId;
+        window.location.href = 'confirmation.html?order='+res.orderId;
     } catch(err){
         showPopUpError('Une erreur est survenus')
     }
