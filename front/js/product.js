@@ -47,7 +47,7 @@ function showProductDetails(details){
    }
 }
 
-//recupère la couleur, l'id et la quantité du produit choisit par l'utilisateur
+//gère l'ajout d'un produit dans le panier
 function handleAddToCartEvent(){
     let id = getIdFromUrl();
     let color = document.querySelector('#colors').value;
