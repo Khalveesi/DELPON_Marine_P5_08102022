@@ -35,3 +35,8 @@ function showPopUpError(message){
 function showPopUpSuccess(message){
   showPopUp(message, "success");
 }
+
+//permet de contenir une valeur entre un minimum et un maximum
+function clamp(value, min, max) {
+  return Math.max(Math.min(parseInt(value), max), min);
+}

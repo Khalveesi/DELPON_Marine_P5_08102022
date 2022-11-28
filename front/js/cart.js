@@ -1,7 +1,19 @@
 
 const cartProducts = [];
 
-async function main() {
+function main() {
+    fetchLocalStorageProductsDetails().then(function() {
+        showTotalPrice(calculateTotalPrice(cartProducts));
+        showTotalProduct(calculateTotalQuantity(cartProducts));
+        refreshFormVisibility();
+        attachEventListenerToFormField();
+    }).catch(showError)
+}
+
+main();
+
+//récupère les détails des produits stockés dans le local storage
+async function fetchLocalStorageProductsDetails(){
     const products = getProductsFromLocalStorage();
     for (let cartProduct of products) {
         const product = await getProductFromApi(cartProduct.id);
@@ -13,13 +25,7 @@ async function main() {
         });
         showProductInCart(product, cartProduct.color, cartProduct.quantity);
     }
-    showTotalPrice(calculateTotalPrice(cartProducts));
-    showTotalProduct(calculateTotalQuantity(cartProducts));
-    refreshFormVisibility();
-    attachEventListenerToFormField();
 }
-
-main();
 
 //enlève le formulaire de commande quand le panier est vide
 function refreshFormVisibility(){
@@ -149,9 +155,12 @@ function showProductInCart(product, color, quantity) {
     inputQuantity.addEventListener(
         "change",
         function(evt){
-            onProductQuantityChange(product, color, parseInt(evt.target.value))
+            let quantity = clamp(parseInt(evt.target.value), 1, 100);
+            evt.target.value = quantity.toString();
+            onProductQuantityChange(product, color, quantity);
         }
     );
+
 }
 
 //gère l'évènement de la supression d'un produit
@@ -168,6 +177,7 @@ function onProductRemove(product, color) {
 
 //gère l'évènement du changement de la quantité dde produit
 function onProductQuantityChange(product, color, quantity){
+
     updateProductQuantity(cartProducts, product._id, color, quantity);
     storeCartProducts(cartProducts);
     showTotalPrice(calculateTotalPrice(cartProducts));
@@ -352,4 +362,8 @@ async function postOrder(requestBody){
 //vide le local sotrage quand la commande est passée
 function clearLocalStorage(){
     localStorage.clear();
+}
+
+function showError(){
+    document.querySelector('.cart').textContent = "Désolée, le site n'est pas disponible pour le moment. Réessayez plus tard !";
 }

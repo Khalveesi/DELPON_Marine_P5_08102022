@@ -3,6 +3,8 @@ function main() {
     getProductFromApi(id).then(showProductDetails).catch(showError);
     let btnAddToCart = document.querySelector('#addToCart');
     btnAddToCart.addEventListener('click', handleAddToCartEvent);
+    let quantityInput = document.querySelector('#quantity');
+    quantityInput.addEventListener('change', handleQuantityChange);
 }
 
 main();
@@ -47,18 +49,29 @@ function showProductDetails(details){
    }
 }
 
+function handleQuantityChange(evt){
+    evt.target.value = clamp(parseInt(evt.target.value), 1, 100);
+}
+
 //gère l'ajout d'un produit dans le panier
 function handleAddToCartEvent(){
     let id = getIdFromUrl();
     let color = document.querySelector('#colors').value;
     let quantity = parseInt(document.querySelector('#quantity').value);
-    if (color != '' && quantity != 0){
-        try {
-            addProductToCart(id, color, quantity);
-            showPopUpSuccess('Votre article à bien été ajouté au panier !');
-        } catch (err){
-            showPopUpError(err.message);
-        }
+
+    if (color == '') {
+        return showPopUpError('Veuillez selectioner un coloris')
+    }
+
+    if (quantity == 0) {
+        return showPopUpError('Veuillez selectioner une quantité (min : 1, max : 100)')
+    }
+
+    try {
+        addProductToCart(id, color, quantity);
+        showPopUpSuccess('Votre article à bien été ajouté au panier !');
+    } catch (err){
+        showPopUpError(err.message);
     }
 }
 
@@ -88,7 +101,7 @@ function addProductToCart(id, color, quantity){
         cart.push(newProduct);
     } else {
         if (cart[index].quantity + quantity > 100){
-            throw new Error(`Impossible d'ajouter plus de produit dans le panier`)
+            throw new Error(`Impossible d'ajouter plus de 100 produits dans le panier (actuellement: ${cart[index].quantity})`)
         }
         cart[index].quantity += quantity;
     }

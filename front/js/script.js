@@ -16,6 +16,7 @@ function showProducts(products) {
   }
 }
 
+
 //affichage d'un produit
 function showProduct(product) {
   let productLink = document.createElement('a');
@@ -38,7 +39,7 @@ function showProduct(product) {
 }
 
 //montre un message d'erreur si l'API n'est pas disponible
-function showError(error){
+function showError(){
   let errorMessage = document.createElement('p');
   errorMessage.textContent = "Désolée, le site n'est pas disponible pour le moment. Réessayez plus tard !";
   document.querySelector('#items').appendChild(errorMessage);
