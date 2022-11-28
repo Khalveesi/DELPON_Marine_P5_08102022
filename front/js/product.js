@@ -49,6 +49,7 @@ function showProductDetails(details){
    }
 }
 
+//gère l'evenement de changement de valeur du champ quantité
 function handleQuantityChange(evt){
     evt.target.value = clamp(parseInt(evt.target.value), 1, 100);
 }

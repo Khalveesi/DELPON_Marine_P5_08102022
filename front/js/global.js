@@ -10,6 +10,7 @@ function getProductFromApi(id) {
     });
   }
 
+  //Affiche une pop vup informativex
   function showPopUp(message, type){
     let popUp = document.createElement('div');
     popUp.textContent = message;

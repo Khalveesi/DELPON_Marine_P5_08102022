@@ -221,6 +221,7 @@ function updateProductQuantity(products, id, color, quantity){
     }
 }
 
+//gère les attaches des event sur le formulaire
 function attachEventListenerToFormField(){
     const formContent = document.querySelector('.cart__order__form');
     const userFirstName = document.querySelector('#firstName');
@@ -278,6 +279,7 @@ function checkFirstNameField() {
     return isValidFirstName;
 }
 
+//vérifie si le nom de famille est valide
 function checkLastNameField() {
     const lastNameValidation = /^(?:[A-Za-z]+[\s]{0,1})+$/;
     const userLastName = document.querySelector("#lastName").value;
@@ -364,6 +366,7 @@ function clearLocalStorage(){
     localStorage.clear();
 }
 
+//montre un message quand l'API n'est pas disponible
 function showError(){
     document.querySelector('.cart').textContent = "Désolée, le site n'est pas disponible pour le moment. Réessayez plus tard !";
 }
